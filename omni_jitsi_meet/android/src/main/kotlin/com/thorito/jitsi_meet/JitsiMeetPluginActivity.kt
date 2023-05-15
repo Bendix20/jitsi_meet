@@ -49,11 +49,12 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
         }
 
     override fun onStop() {
-        eventStreamHandler.onClosed()
-        val hangUpIntent: Intent = BroadcastIntentHelper.buildHangUpIntent()
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(hangUpIntent)
-        val intent = Intent("JITSI_MEETING_CLOSE")
-        sendBroadcast(intent)
+        if (!onStopCalled) {
+            val hangUpIntent: Intent = BroadcastIntentHelper.buildHangUpIntent()
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(hangUpIntent)
+            val intent = Intent("JITSI_MEETING_CLOSE")
+            sendBroadcast(intent)
+        }
         super.onStop()
     }
 
@@ -90,7 +91,11 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
             val data = event.data
             when (event.type!!) {
                 BroadcastEvent.Type.CONFERENCE_JOINED -> eventStreamHandler.onConferenceJoined(data)
-                BroadcastEvent.Type.CONFERENCE_TERMINATED -> eventStreamHandler.onConferenceTerminated(data)
+                BroadcastEvent.Type.CONFERENCE_TERMINATED -> {
+                    onStopCalled = true
+                    eventStreamHandler.onConferenceTerminated(data)
+                }
+
                 BroadcastEvent.Type.CONFERENCE_WILL_JOIN -> eventStreamHandler.onConferenceWillJoin(data)
                 BroadcastEvent.Type.AUDIO_MUTED_CHANGED -> eventStreamHandler.onAudioMutedChanged(data)
                 BroadcastEvent.Type.PARTICIPANT_JOINED -> eventStreamHandler.onParticipantJoined(data)
