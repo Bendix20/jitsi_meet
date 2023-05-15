@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.jitsi.meet.sdk.BroadcastEvent
+import org.jitsi.meet.sdk.BroadcastIntentHelper
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 
@@ -49,6 +50,10 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
 
     override fun onStop() {
         eventStreamHandler.onClosed()
+        val hangUpIntent: Intent = BroadcastIntentHelper.buildHangUpIntent()
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(hangUpIntent)
+        val intent = Intent("JITSI_MEETING_CLOSE")
+        sendBroadcast(intent)
         super.onStop()
     }
 
@@ -62,10 +67,9 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
 
-        if (isInPictureInPictureMode){
+        if (isInPictureInPictureMode) {
             JitsiMeetEventStreamHandler.instance.onPictureInPictureWillEnter()
-        }
-        else {
+        } else {
             JitsiMeetEventStreamHandler.instance.onPictureInPictureTerminated()
         }
 
