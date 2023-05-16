@@ -127,17 +127,19 @@ public class JitsiMeetPlugin() : FlutterPlugin, MethodCallHandler,
                 setUserInfo(userInfo)
             }
 
-            val featureFlags =
-                call.argument<HashMap<String, Any?>>("featureFlags")
-            featureFlags?.forEach { (key, value) ->
-                // Can only be bool, int or string according to
-                // the overloads of setFeatureFlag.
-                when (value) {
-                    is Boolean -> setFeatureFlag(key, value)
-                    is Int -> setFeatureFlag(key, value)
-                    else -> setFeatureFlag(key, value.toString())
-                }
-            }
+            setFeatureFlag("notifications.enabled", false)
+
+//            val featureFlags =
+//                call.argument<HashMap<String, Any?>>("featureFlags")
+//            featureFlags?.forEach { (key, value) ->
+//                // Can only be bool, int or string according to
+//                // the overloads of setFeatureFlag.
+//                when (value) {
+//                    is Boolean -> setFeatureFlag(key, value)
+//                    is Int -> setFeatureFlag(key, value)
+//                    else -> setFeatureFlag(key, value.toString())
+//                }
+//            }
 
             val configOverrides =
                 call.argument<HashMap<String, Any?>>("configOverrides")
