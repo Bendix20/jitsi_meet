@@ -49,12 +49,7 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
         }
 
     override fun onStop() {
-        if (!onStopCalled) {
-            val hangUpIntent: Intent = BroadcastIntentHelper.buildHangUpIntent()
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(hangUpIntent)
-            val intent = Intent("JITSI_MEETING_CLOSE")
-            sendBroadcast(intent)
-        }
+        eventStreamHandler.onClosed()
         super.onStop()
     }
 
@@ -73,7 +68,6 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
         } else {
             JitsiMeetEventStreamHandler.instance.onPictureInPictureTerminated()
         }
-
     }
 
     private fun registerForBroadcastMessages() {
