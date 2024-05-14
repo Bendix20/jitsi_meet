@@ -63,7 +63,7 @@ class JitsiMeet {
   }
 
   static closeMeeting() => JitsiMeetPlatform.instance.closeMeeting();
-  
+
   static Future<JitsiMeetingResponse> hangUp() => JitsiMeetPlatform.instance.hangUp();
 
   /// allow execute a command over a Jitsi live session (only for web)

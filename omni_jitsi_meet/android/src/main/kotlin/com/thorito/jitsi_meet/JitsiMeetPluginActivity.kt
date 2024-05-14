@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.jitsi.meet.sdk.BroadcastEvent
-import org.jitsi.meet.sdk.BroadcastIntentHelper
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 
@@ -48,11 +47,6 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
             }
         }
 
-    override fun onStop() {
-        eventStreamHandler.onClosed()
-        super.onStop()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerForBroadcastMessages()
@@ -60,14 +54,21 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
         turnScreenOnAndKeyguardOff();
     }
 
+    override fun onStop() {
+        eventStreamHandler.onClosed()
+        super.onStop()
+    }
+
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
 
-        if (isInPictureInPictureMode) {
+        if (isInPictureInPictureMode){
             JitsiMeetEventStreamHandler.instance.onPictureInPictureWillEnter()
-        } else {
+        }
+        else {
             JitsiMeetEventStreamHandler.instance.onPictureInPictureTerminated()
         }
+
     }
 
     private fun registerForBroadcastMessages() {
@@ -89,7 +90,6 @@ class JitsiMeetPluginActivity : JitsiMeetActivity() {
                     onStopCalled = true
                     eventStreamHandler.onConferenceTerminated(data)
                 }
-
                 BroadcastEvent.Type.CONFERENCE_WILL_JOIN -> eventStreamHandler.onConferenceWillJoin(data)
                 BroadcastEvent.Type.AUDIO_MUTED_CHANGED -> eventStreamHandler.onAudioMutedChanged(data)
                 BroadcastEvent.Type.PARTICIPANT_JOINED -> eventStreamHandler.onParticipantJoined(data)
